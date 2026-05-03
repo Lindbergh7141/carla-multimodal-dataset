@@ -13,6 +13,40 @@ from src.config import (
 from src.utils.weather import get_weather
 from src.dataset.dataset_writer import create_scene_dirs, save_meta
 from src.sensors.sensor_manager import SensorManager
+from src.dataset.calibration_writer import save_calibration
+
+def carla_depth_to_array(depth_image):
+    """
+    Convert CARLA depth image to metric depth in meters.
+    Output shape: H x W
+    """
+    array = np.frombuffer(depth_image.raw_data, dtype=np.uint8)
+    array = np.reshape(array, (depth_image.height, depth_image.width, 4))
+
+    # CARLA raw image format is BGRA
+    b = array[:, :, 0].astype(np.float32)
+    g = array[:, :, 1].astype(np.float32)
+    r = array[:, :, 2].astype(np.float32)
+
+    normalized = (r + g * 256.0 + b * 256.0 * 256.0) / (256.0**3 - 1.0)
+
+    depth_meters = 1000.0 * normalized
+
+    return depth_meters
+
+def carla_semantic_to_array(semantic_image):
+    """
+    Convert CARLA semantic segmentation image to class id map.
+    Output shape: H x W
+    Each value is a semantic class id.
+    """
+    array = np.frombuffer(semantic_image.raw_data, dtype=np.uint8)
+    array = np.reshape(array, (semantic_image.height, semantic_image.width, 4))
+
+    # CARLA semantic label is stored in the R channel
+    semantic_ids = array[:, :, 2]
+
+    return semantic_ids
 
 def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_index):
     print("=" * 60)
@@ -49,6 +83,14 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
         sensor_manager = SensorManager(world, blueprint_library, vehicle)
         sensor_manager.setup_sensors()
 
+        save_calibration(
+            calib_dir=dirs["calib"],
+            sensor_specs=sensor_manager.sensor_specs,
+            image_width=IMAGE_WIDTH,
+            image_height=IMAGE_HEIGHT,
+            fov=FOV,
+        )
+
         frame_count = 0
 
         while frame_count < max_frames:
@@ -78,13 +120,20 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
                 str(depth_path),
                 carla.ColorConverter.LogarithmicDepth,
             )
+            depth_array = carla_depth_to_array(depth_image)
+            depth_value_path = dirs["depth_value_front"] / f"{frame_key}.npy"
+            np.save(str(depth_value_path), depth_array)
+
 
             semantic_path = dirs["semantic_front"] / f"{frame_key}.png"
             semantic_image.save_to_disk(
                 str(semantic_path),
                 carla.ColorConverter.CityScapesPalette,
             )
+            semantic_array = carla_semantic_to_array(semantic_image)
 
+            semantic_raw_path = dirs["semantic_raw_front"] / f"{frame_key}.npy"
+            np.save(str(semantic_raw_path), semantic_array)
 
             lidar_path = dirs["lidar_top"] / f"{frame_key}.npy"
             np.save(str(lidar_path), points)
@@ -148,7 +197,9 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
             index[frame_key] = {
                 "rgb_front": str(rgb_path.relative_to(scene_dir)),
                 "depth_front": str(depth_path.relative_to(scene_dir)),
+                "depth_value_front": str(depth_value_path.relative_to(scene_dir)),
                 "semantic_front": str(semantic_path.relative_to(scene_dir)),
+                "semantic_raw_front": str(semantic_raw_path.relative_to(scene_dir)),
                 "lidar_top": str(lidar_path.relative_to(scene_dir)),
                 "pose": str(pose_path.relative_to(scene_dir)),
                 "gnss": str(gnss_path.relative_to(scene_dir)),

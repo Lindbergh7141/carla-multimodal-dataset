@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.vscode/
+/dataset/
+output/
+*.npy
+*.png

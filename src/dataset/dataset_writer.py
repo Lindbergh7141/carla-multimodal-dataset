@@ -6,11 +6,13 @@ def create_scene_dirs(scene_dir):
     dirs = {
         "rgb_front": scene_dir / "rgb" / "front",
         "depth_front": scene_dir / "depth" / "front",
+        "depth_value_front": scene_dir / "depth_value" / "front",
         "semantic_front": scene_dir / "semantic" / "front",
         "lidar_top": scene_dir / "lidar" / "top",
         "pose": scene_dir / "pose",
         "gnss": scene_dir / "gnss",
         "imu": scene_dir / "imu",
+        "calib": scene_dir / "calib",
     }
 
     for d in dirs.values():

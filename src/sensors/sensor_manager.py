@@ -12,6 +12,7 @@ class SensorManager:
         self.vehicle = vehicle
         self.sensors = []
         self.queues = {}
+        self.sensor_specs = {}
 
     def setup_sensors(self):
         camera_transform = carla.Transform(
@@ -75,6 +76,11 @@ class SensorManager:
 
         self.sensors.append(sensor)
         self.queues[name] = q
+        self.sensor_specs[name] = {
+            "type": "camera",
+            "blueprint_id": blueprint_id,
+            "transform": transform,
+        }
 
     def _create_lidar(self, name, transform):
         bp = self.blueprint_library.find("sensor.lidar.ray_cast")
@@ -89,6 +95,11 @@ class SensorManager:
 
         self.sensors.append(sensor)
         self.queues[name] = q
+        self.sensor_specs[name] = {
+            "type": "camera",
+            "blueprint_id": "sensor.lidar.ray_cast",
+            "transform": transform,
+        }
 
     def _create_other_sensor(self, name, blueprint_id, transform):
         bp = self.blueprint_library.find(blueprint_id)
@@ -99,6 +110,12 @@ class SensorManager:
 
         self.sensors.append(sensor)
         self.queues[name] = q
+
+        self.sensor_specs[name] = {
+            "type": "other",
+            "blueprint_id": blueprint_id,
+            "transform": transform,
+        }
 
     def get_frame(self):
         data = {
