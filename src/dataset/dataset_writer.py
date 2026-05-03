@@ -5,13 +5,19 @@ from src.config import IMAGE_WIDTH, IMAGE_HEIGHT, FOV, FIXED_DELTA_SECONDS
 def create_scene_dirs(scene_dir):
     dirs = {
         "rgb_front": scene_dir / "rgb" / "front",
+
         "depth_front": scene_dir / "depth" / "front",
         "depth_value_front": scene_dir / "depth_value" / "front",
+
         "semantic_front": scene_dir / "semantic" / "front",
+        "semantic_raw_front": scene_dir / "semantic_raw" / "front",
+
         "lidar_top": scene_dir / "lidar" / "top",
+
         "pose": scene_dir / "pose",
         "gnss": scene_dir / "gnss",
         "imu": scene_dir / "imu",
+
         "calib": scene_dir / "calib",
     }
 
@@ -35,7 +41,9 @@ def save_meta(scene_dir, scene_id, map_name, weather_name, max_frames):
         "sensors": [
             "rgb_front",
             "depth_front",
+            "depth_value_front",
             "semantic_front",
+            "semantic_raw_front",
             "lidar_top",
             "pose",
             "gnss",
