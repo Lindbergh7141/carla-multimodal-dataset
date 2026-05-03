@@ -26,17 +26,17 @@ The goal is to build a dataset for:
 
 ##Key Features
 
-* ✅ **Synchronized multi-sensor data collection**
-* ✅ **Config-driven scene generation**
-* ✅ **Multiple weather conditions (rain, fog, sunset, etc.)**
-* ✅ **Modular architecture (SensorManager, DatasetWriter, SceneRunner)**
-* ✅ **Per-scene metadata and indexing**
-* 🚧 OSM / OpenDRIVE map integration (planned)
-* 🚧 Calibration export (planned)
+*  **Synchronized multi-sensor data collection**
+*  **Config-driven scene generation**
+*  **Multiple weather conditions (rain, fog, sunset, etc.)**
+*  **Modular architecture (SensorManager, DatasetWriter, SceneRunner)**
+*  **Per-scene metadata and indexing**
+*  OSM / OpenDRIVE map integration (planned)
+*  Calibration export (planned)
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 src/
@@ -50,7 +50,7 @@ src/
 
 ---
 
-## 📊 Dataset Structure
+##  Dataset Structure
 
 Each scene is saved as:
 
@@ -73,7 +73,7 @@ dataset/
 
 ---
 
-## ⚙️ Installation
+##  Installation
 
 Requirements:
 
@@ -88,7 +88,7 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ Usage
+##  Usage
 
 ### 1. Start CARLA
 
@@ -139,7 +139,7 @@ python main.py
 
 ---
 
-## 🧩 Modular Design
+##  Modular Design
 
 This project separates responsibilities:
 
@@ -168,7 +168,7 @@ This design allows easy extension for:
 
 ---
 
-## 📌 Research Goal
+##  Research Goal
 
 This dataset is designed for:
 
@@ -176,14 +176,13 @@ This dataset is designed for:
 
 ---
 
-## 📜 License
+##  License
 
 MIT License (or your choice)
 
 ---
 
-## 👤 Author
-
-Your Name
+##  Author
+Yun Huang
 
 ---
