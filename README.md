@@ -18,7 +18,7 @@ It supports synchronized acquisition of multiple modalities under diverse enviro
 * IMU
 * Ground truth pose
 
-The goal is to build a dataset for:
+The goal is to build a general dataset for:
 
 > **Cross-visual multimodal fusion localization under complex conditions** and also other tasks about robotic and autonomous driving
 
@@ -32,7 +32,7 @@ The goal is to build a dataset for:
 *  **Modular architecture (SensorManager, DatasetWriter, SceneRunner)**
 *  **Per-scene metadata and indexing**
 *  OSM / OpenDRIVE map integration (planned)
-*  Calibration export (planned)
+*  Calibration export 
 
 ---
 
@@ -51,8 +51,6 @@ src/
 ---
 
 ##  Dataset Structure
-
-Each scene is saved as:
 
 ```
 dataset/
@@ -123,12 +121,12 @@ SCENE_CONFIGS = [
 ### 3. Run data collection
 
 ```bash
-python main.py
+python main_v1.py
 ```
 
 ---
 
-## 🌦️ Supported Weather
+##  Supported Weather 
 
 * Clear day
 * Cloudy
@@ -152,7 +150,7 @@ This design allows easy extension for:
 
 * new sensors
 * new weather conditions
-* multi-camera setups
+* multi-camera setups 
 * large-scale data generation
 
 ---
