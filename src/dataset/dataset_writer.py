@@ -1,5 +1,5 @@
 import json
-from src.config import IMAGE_WIDTH, IMAGE_HEIGHT, FOV, FIXED_DELTA_SECONDS
+from src.config import IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_FOV, FIXED_DELTA_SECONDS
 
 
 def create_scene_dirs(scene_dir):
@@ -43,7 +43,7 @@ def save_meta(scene_dir, scene_id, map_name, weather_name, max_frames):
         "num_frames": max_frames,
         "image_width": IMAGE_WIDTH,
         "image_height": IMAGE_HEIGHT,
-        "fov": FOV,
+        "fov": IMAGE_FOV,
         "sensors": [
             "rgb_front",
             "depth_front",

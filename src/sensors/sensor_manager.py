@@ -67,7 +67,7 @@ class SensorManager:
             blueprint_id="sensor.camera.semantic_segmentation",
             transform=bev_transform,
             image_width=BEV_SIZE,
-            mage_height=BEV_SIZE,
+            image_height=BEV_SIZE,
             fov=BEV_FOV,
         )
 
@@ -95,12 +95,12 @@ class SensorManager:
         transform,
         image_width,
         image_height,
-        fov，
+        fov,
     ):
         bp = self.blueprint_library.find(blueprint_id)
         bp.set_attribute("image_size_x", str(image_width))
         bp.set_attribute("image_size_y", str(image_height))
-        bp.set_attribute("fov", str(FOV))
+        bp.set_attribute("fov", str(fov))
 
         sensor = self.world.spawn_actor(bp, transform, attach_to=self.vehicle)
         q = queue.Queue()

@@ -7,13 +7,14 @@ from src.config import (
     DATASET_ROOT,
     IMAGE_WIDTH,
     IMAGE_HEIGHT,
-    FOV,
+    IMAGE_FOV,
     FIXED_DELTA_SECONDS,
 )
 from src.utils.weather import get_weather
 from src.dataset.dataset_writer import create_scene_dirs, save_meta
 from src.sensors.sensor_manager import SensorManager
 from src.dataset.calibration_writer import save_calibration
+from src.map.global_map_builder import build_global_semantic_map
 
 def carla_depth_to_array(depth_image):
     """
@@ -58,6 +59,7 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
     save_meta(scene_dir, scene_id, map_name, weather_name, max_frames)
 
     world = client.load_world(map_name)
+    build_global_semantic_map(world, map_name)
 
     settings = world.get_settings()
     settings.synchronous_mode = True
@@ -88,7 +90,7 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
             sensor_specs=sensor_manager.sensor_specs,
             image_width=IMAGE_WIDTH,
             image_height=IMAGE_HEIGHT,
-            fov=FOV,
+            fov=IMAGE_FOV,
         )
 
         frame_count = 0
