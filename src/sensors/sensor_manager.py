@@ -2,8 +2,7 @@ import queue
 import carla
 import numpy as np
 
-from src.config import IMAGE_WIDTH, IMAGE_HEIGHT, FOV
-
+from src.config import IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_FOV, BEV_FOV, BEV_SIZE
 
 class SensorManager:
     def __init__(self, world, blueprint_library, vehicle):
@@ -39,18 +38,27 @@ class SensorManager:
             name="rgb_front",
             blueprint_id="sensor.camera.rgb",
             transform=camera_transform,
+            image_width=IMAGE_WIDTH,
+            image_height=IMAGE_HEIGHT,
+            fov=IMAGE_FOV,
         )
 
         self._create_camera(
             name="depth_front",
             blueprint_id="sensor.camera.depth",
             transform=camera_transform,
+            image_width=IMAGE_WIDTH,
+            image_height=IMAGE_HEIGHT,
+            fov=IMAGE_FOV,
         )
 
         self._create_camera(
             name="semantic_front",
             blueprint_id="sensor.camera.semantic_segmentation",
             transform=camera_transform,
+            image_width=IMAGE_WIDTH,
+            image_height=IMAGE_HEIGHT,
+            fov=IMAGE_FOV,
         )
 
 
@@ -58,6 +66,9 @@ class SensorManager:
             name="semantic_bev",
             blueprint_id="sensor.camera.semantic_segmentation",
             transform=bev_transform,
+            image_width=BEV_SIZE,
+            mage_height=BEV_SIZE,
+            fov=BEV_FOV,
         )
 
         self._create_lidar(
@@ -77,10 +88,18 @@ class SensorManager:
             transform=small_sensor_transform,
         )
 
-    def _create_camera(self, name, blueprint_id, transform):
+    def _create_camera(
+        self,
+        name,
+        blueprint_id,
+        transform,
+        image_width,
+        image_height,
+        fov，
+    ):
         bp = self.blueprint_library.find(blueprint_id)
-        bp.set_attribute("image_size_x", str(IMAGE_WIDTH))
-        bp.set_attribute("image_size_y", str(IMAGE_HEIGHT))
+        bp.set_attribute("image_size_x", str(image_width))
+        bp.set_attribute("image_size_y", str(image_height))
         bp.set_attribute("fov", str(FOV))
 
         sensor = self.world.spawn_actor(bp, transform, attach_to=self.vehicle)
