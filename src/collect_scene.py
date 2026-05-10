@@ -104,6 +104,7 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
             image = frame_data["rgb_front"]
             depth_image = frame_data["depth_front"]
             semantic_image = frame_data["semantic_front"]
+            semantic_bev_image = frame_data["semantic_bev"]
             points = frame_data["lidar_points"]
             gnss_data = frame_data["gnss"]
             imu_data = frame_data["imu"]
@@ -131,9 +132,33 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
                 carla.ColorConverter.CityScapesPalette,
             )
             semantic_array = carla_semantic_to_array(semantic_image)
-
             semantic_raw_path = dirs["semantic_raw_front"] / f"{frame_key}.npy"
             np.save(str(semantic_raw_path), semantic_array)
+
+            semantic_bev_path = dirs["semantic_bev"] / f"{frame_key}.png"
+            semantic_bev_image.save_to_disk(
+                str(semantic_bev_path),
+                carla.ColorConverter.CityScapesPalette,
+            )
+            bev_raw = carla_semantic_to_array(semantic_bev_image)
+            bev_raw_path = dirs["bev_raw"] / f"{frame_key}.npy"
+            np.save(str(bev_raw_path), bev_raw)
+
+            road_mask = (bev_raw == 7).astype(np.uint8)
+            lane_mask = (bev_raw == 6).astype(np.uint8)
+            sidewalk_mask = (bev_raw == 8).astype(np.uint8)
+            road_path = dirs["bev_road"] / f"{frame_key}.npy"
+            lane_path = dirs["bev_lane"] / f"{frame_key}.npy"
+
+            np.save(str(road_path), road_mask)
+            np.save(str(lane_path), lane_mask)
+
+            bev_multichannel = np.stack(
+                [road_mask, lane_mask, sidewalk_mask],
+                axis=0
+            )
+            bev_multichannel_path = dirs["bev_multichannel"] / f"{frame_key}.npy"
+            np.save(str(bev_multichannel_path), bev_multichannel)
 
             lidar_path = dirs["lidar_top"] / f"{frame_key}.npy"
             np.save(str(lidar_path), points)
@@ -200,6 +225,9 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
                 "depth_value_front": str(depth_value_path.relative_to(scene_dir)),
                 "semantic_front": str(semantic_path.relative_to(scene_dir)),
                 "semantic_raw_front": str(semantic_raw_path.relative_to(scene_dir)),
+                "semantic_bev": str(semantic_bev_path.relative_to(scene_dir)),
+                "bev_raw": str(bev_raw_path.relative_to(scene_dir)),
+                "bev_multichannel": str(bev_multichannel_path.relative_to(scene_dir)),
                 "lidar_top": str(lidar_path.relative_to(scene_dir)),
                 "pose": str(pose_path.relative_to(scene_dir)),
                 "gnss": str(gnss_path.relative_to(scene_dir)),

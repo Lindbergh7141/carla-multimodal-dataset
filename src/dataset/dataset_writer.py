@@ -12,6 +12,12 @@ def create_scene_dirs(scene_dir):
         "semantic_front": scene_dir / "semantic" / "front",
         "semantic_raw_front": scene_dir / "semantic_raw" / "front",
 
+        "semantic_bev": scene_dir / "semantic" / "bev",
+        "bev_raw": scene_dir / "bev" / "raw",
+        "bev_road": scene_dir / "bev" / "road",
+        "bev_lane": scene_dir / "bev" / "lane",
+        "bev_multichannel": scene_dir / "bev" / "multichannel",
+
         "lidar_top": scene_dir / "lidar" / "top",
 
         "pose": scene_dir / "pose",
@@ -44,6 +50,9 @@ def save_meta(scene_dir, scene_id, map_name, weather_name, max_frames):
             "depth_value_front",
             "semantic_front",
             "semantic_raw_front",
+            "semantic_bev",
+            "bev_raw",
+            "bev_multichannel",
             "lidar_top",
             "pose",
             "gnss",

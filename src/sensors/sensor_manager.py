@@ -20,6 +20,12 @@ class SensorManager:
             carla.Rotation(pitch=0.0, yaw=0.0, roll=0.0),
         )
 
+        bev_transform = carla.Transform(
+        carla.Location(x=0.0, y=0.0, z=50.0),
+        carla.Rotation(pitch=-90.0, yaw=0.0, roll=0.0),
+        )
+
+
         lidar_transform = carla.Transform(
             carla.Location(x=0.0, y=0.0, z=2.5),
             carla.Rotation(pitch=0.0, yaw=0.0, roll=0.0),
@@ -45,6 +51,13 @@ class SensorManager:
             name="semantic_front",
             blueprint_id="sensor.camera.semantic_segmentation",
             transform=camera_transform,
+        )
+
+
+        self._create_camera(
+            name="semantic_bev",
+            blueprint_id="sensor.camera.semantic_segmentation",
+            transform=bev_transform,
         )
 
         self._create_lidar(
@@ -122,6 +135,7 @@ class SensorManager:
             "rgb_front": self.queues["rgb_front"].get(),
             "depth_front": self.queues["depth_front"].get(),
             "semantic_front": self.queues["semantic_front"].get(),
+            "semantic_bev": self.queues["semantic_bev"].get(),
             "lidar_top": self.queues["lidar_top"].get(),
             "gnss": self.queues["gnss"].get(),
             "imu": self.queues["imu"].get(),
