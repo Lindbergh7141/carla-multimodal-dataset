@@ -2,6 +2,7 @@ import carla
 import json
 import queue
 import numpy as np
+import random
 
 from src.config import (
     DATASET_ROOT,
@@ -49,16 +50,21 @@ def carla_semantic_to_array(semantic_image):
 
     return semantic_ids
 
-def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_index):
+def collect_scene(client, scene_id, split, map_name, weather_name, max_frames, spawn_index, seed):
     print("=" * 60)
     print(f"Collecting {scene_id}: {map_name}, {weather_name}")
     print("=" * 60)
 
-    scene_dir = DATASET_ROOT / scene_id
+    scene_dir = DATASET_ROOT / split / scene_id
     dirs = create_scene_dirs(scene_dir)
     save_meta(scene_dir, scene_id, map_name, weather_name, max_frames)
 
     world = client.load_world(map_name)
+    random.seed(seed)
+    np.random.seed(seed)
+    traffic_manager = client.get_trafficmanager(8000)
+
+    traffic_manager.set_random_device_seed(seed)
     build_global_semantic_map(world, map_name)
 
     settings = world.get_settings()
@@ -80,7 +86,7 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
 
         vehicle = world.spawn_actor(vehicle_bp, spawn_point)
         actors.append(vehicle)
-        vehicle.set_autopilot(True)
+        vehicle.set_autopilot(True, traffic_manager.get_port())
 
         sensor_manager = SensorManager(world, blueprint_library, vehicle)
         sensor_manager.setup_sensors()
@@ -92,6 +98,9 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
             image_height=IMAGE_HEIGHT,
             fov=IMAGE_FOV,
         )
+
+        positions = []
+        trajectory = []
 
         frame_count = 0
 
@@ -166,6 +175,17 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
             np.save(str(lidar_path), points)
 
             transform = vehicle.get_transform()
+            positions.append([
+                transform.location.x,
+                transform.location.y,
+            ])
+            trajectory.append({
+                "frame": frame_id,
+                "x": transform.location.x,
+                "y": transform.location.y,
+                "yaw": transform.rotation.yaw,
+            })
+
             velocity = vehicle.get_velocity()
 
             pose = {
@@ -236,10 +256,36 @@ def collect_scene(client, scene_id, map_name, weather_name, max_frames, spawn_in
                 "imu": str(imu_path.relative_to(scene_dir)),
                 "carla_frame": image.frame,
             }
-
+            
             print(f"{scene_id} saved frame {frame_key}")
             frame_count += 1
 
+        total_distance = 0.0
+
+        for i in range(1, len(positions)):
+            x1, y1 = positions[i - 1]
+            x2, y2 = positions[i]
+
+            dx = x2 - x1
+            dy = y2 - y1
+
+            total_distance += (dx**2 + dy**2) ** 0.5
+
+        print(f"Trajectory distance: {total_distance:.2f} meters")
+
+        if total_distance < 20.0:
+            import shutil
+
+            shutil.rmtree(scene_dir)
+
+            print("Discarded bad trajectory.")
+
+            return
+        
+        trajectory_path = scene_dir / "trajectory.json"
+
+        with open(trajectory_path, "w") as f:
+            json.dump(trajectory, f, indent=2)
         with open(scene_dir / "index.json", "w") as f:
             json.dump(index, f, indent=2)
 

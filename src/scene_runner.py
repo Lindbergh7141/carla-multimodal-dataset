@@ -22,8 +22,10 @@ class SceneRunner:
             collect_scene(
                 client=self.client,
                 scene_id=cfg["scene_id"],
+                split=cfg["split"],
                 map_name=cfg["map"],
                 weather_name=cfg["weather"],
                 max_frames=cfg["max_frames"],
                 spawn_index=cfg["spawn_index"],
+                seed=cfg["seed"]
             )
