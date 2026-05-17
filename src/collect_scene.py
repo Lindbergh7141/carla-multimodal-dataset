@@ -59,7 +59,7 @@ def collect_scene(client, scene_id, split, map_name, weather_name, max_frames, s
     dirs = create_scene_dirs(scene_dir)
     save_meta(scene_dir, scene_id, map_name, weather_name, max_frames)
 
-    world = client.load_world(map_name)
+    world = client.get_world()
     random.seed(seed)
     np.random.seed(seed)
     traffic_manager = client.get_trafficmanager(8000)

@@ -17,7 +17,7 @@ BEV_EXTENT_METERS = BEV_SIZE * BEV_RESOLUTION
 BEV_EGO_CENTERED = True
 BEV_CAMERA_HEIGHT = 50.0
 
-FIXED_DELTA_SECONDS = 0.05  # 20 FPS
+FIXED_DELTA_SECONDS = 0.1  # 10 FPS
 
 GLOBAL_MAP_RESOLUTION = 0.2
 ROAD_LABEL = 1
@@ -72,26 +72,26 @@ for town in train_towns:
 # VAL
 # -------------------
 
-for town in val_towns:
-    for weather in weathers:
-        for spawn in range(5, 7):
-
-            SCENE_CONFIGS.append({
-                "scene_id":
-                f"val_{town.lower()}_{weather}_{spawn:03d}",
-
-                "split": "val",
-
-                "map": town,
-
-                "weather": weather,
-
-                "max_frames": 500,
-
-                "spawn_index": spawn,
-
-                "seed": 2000 + spawn,
-            })
+#for town in val_towns:
+#    for weather in weathers:
+#       for spawn in range(5, 7):
+#
+#            SCENE_CONFIGS.append({
+#                "scene_id":
+#                f"val_{town.lower()}_{weather}_{spawn:03d}",
+#
+#                "split": "val",
+#
+#                "map": town,
+#
+#                "weather": weather,
+#
+#                "max_frames": 500,
+#
+#                "spawn_index": spawn,
+#
+#                "seed": 2000 + spawn,
+#            })
 
 # -------------------
 # TEST
