@@ -90,6 +90,13 @@ def collect_scene(client, scene_id, split, map_name, weather_name, max_frames, s
 
         sensor_manager = SensorManager(world, blueprint_library, vehicle)
         sensor_manager.setup_sensors()
+        print("Warming up sensors...")
+
+        for _ in range(20):
+            world.tick()
+
+        print("Warmup done.")
+
 
         save_calibration(
             calib_dir=dirs["calib"],
