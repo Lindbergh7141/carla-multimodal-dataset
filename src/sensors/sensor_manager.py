@@ -128,7 +128,7 @@ class SensorManager:
         self.sensors.append(sensor)
         self.queues[name] = q
         self.sensor_specs[name] = {
-            "type": "camera",
+            "type": "lidar",
             "blueprint_id": "sensor.lidar.ray_cast",
             "transform": transform,
         }

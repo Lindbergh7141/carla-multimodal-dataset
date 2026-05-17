@@ -24,77 +24,101 @@ ROAD_LABEL = 1
 LANE_LABEL = 2
 SIDEWALK_LABEL = 3
 
-SCENE_CONFIGS = [
+SCENE_CONFIGS = []
 
-    # =========================
-    # TRAIN
-    # =========================
-
-    {
-        "scene_id": "train_town03_clear_001",
-        "split": "train",
-        "map": "Town03",
-        "weather": "clear_day",
-        "max_frames": 300,
-        "spawn_index": 0,
-        "seed": 1001,
-    },
-
-    {
-        "scene_id": "train_town03_clear_002",
-        "split": "train",
-        "map": "Town03",
-        "weather": "clear_day",
-        "max_frames": 300,
-        "spawn_index": 10,
-        "seed": 1002,
-    },
-
-    {
-        "scene_id": "train_town03_cloudy_001",
-        "split": "train",
-        "map": "Town03",
-        "weather": "cloudy_day",
-        "max_frames": 300,
-        "spawn_index": 20,
-        "seed": 1003,
-    },
-
-    # =========================
-    # VALIDATION
-    # =========================
-
-    {
-        "scene_id": "val_town03_rain_001",
-        "split": "val",
-        "map": "Town03",
-        "weather": "rain_day",
-        "max_frames": 300,
-        "spawn_index": 50,
-        "seed": 2001,
-    },
-
-    # =========================
-    # TEST
-    # =========================
-
-    {
-        "scene_id": "test_town05_clear_001",
-        "split": "test",
-        "map": "Town05",
-        "weather": "clear_day",
-        "max_frames": 300,
-        "spawn_index": 0,
-        "seed": 3001,
-    },
-
-    {
-        "scene_id": "test_town10_clear_001",
-        "split": "test",
-        "map": "Town10HD",
-        "weather": "clear_day",
-        "max_frames": 300,
-        "spawn_index": 10,
-        "seed": 3002,
-    },
+train_towns = [
+    "Town03",
 ]
+
+val_towns = [
+    "Town03",
+]
+
+test_towns = [
+    "Town05",
+]
+
+weathers = [
+    "clear_day",
+    "cloudy_day",
+]
+
+# -------------------
+# TRAIN
+# -------------------
+
+for town in train_towns:
+    for weather in weathers:
+        for spawn in range(5):
+
+            SCENE_CONFIGS.append({
+                "scene_id":
+                f"train_{town.lower()}_{weather}_{spawn:03d}",
+
+                "split": "train",
+
+                "map": town,
+
+                "weather": weather,
+
+                "max_frames": 500,
+
+                "spawn_index": spawn,
+
+                "seed": 1000 + spawn,
+            })
+
+# -------------------
+# VAL
+# -------------------
+
+for town in val_towns:
+    for weather in weathers:
+        for spawn in range(5, 7):
+
+            SCENE_CONFIGS.append({
+                "scene_id":
+                f"val_{town.lower()}_{weather}_{spawn:03d}",
+
+                "split": "val",
+
+                "map": town,
+
+                "weather": weather,
+
+                "max_frames": 500,
+
+                "spawn_index": spawn,
+
+                "seed": 2000 + spawn,
+            })
+
+# -------------------
+# TEST
+# -------------------
+
+for town in test_towns:
+    for weather in weathers:
+        for spawn in range(3):
+
+            SCENE_CONFIGS.append({
+                "scene_id":
+                f"test_{town.lower()}_{weather}_{spawn:03d}",
+
+                "split": "test",
+
+                "map": town,
+
+                "weather": weather,
+
+                "max_frames": 500,
+
+                "spawn_index": spawn,
+
+                "seed": 3000 + spawn,
+            })
+
+print(
+    f"Total scenes: "
+    f"{len(SCENE_CONFIGS)}"
+)
